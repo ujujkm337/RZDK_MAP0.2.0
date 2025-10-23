@@ -1,0 +1,21 @@
+{
+  "buildings": {
+    "1": [
+      "images/1_1.jpg",
+      "images/1_2.jpg",
+      "images/1_3.jpg"
+    ]
+  },
+  "schedule": {
+    "1курс": [
+      "images/schedule_1_1.jpg",
+      "images/schedule_1_2.jpg",
+      "images/schedule_1_3.jpg"
+    ],
+    "2курс": [
+      "images/schedule_2_1.jpg",
+      "images/schedule_2_2.jpg",
+      "images/schedule_2_3.jpg"
+    ]
+  }
+}
