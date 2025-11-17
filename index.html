@@ -6,40 +6,35 @@
 <title>Навигатор РЖДК — Уссурийск</title>
 <script src="https://api-maps.yandex.ru/2.1/?apikey=be0c8369-7476-47a3-a315-59ab429fadcb&lang=ru_RU"></script>
 <style>
+/* Стили из первого файла */
 :root{--bg:#07070a;--accent:#00ffd0;--accent2:#6f56ff;--muted:#8aa0b1}
 *{box-sizing:border-box}body{margin:0;height:100vh;font-family:Inter,Segoe UI,Arial;background:linear-gradient(180deg,#03040a,#071021);color:#e6f7f1;overflow:hidden}
 .topbar{position:fixed;left:0;right:0;top:0;height:64px;display:flex;align-items:center;gap:16px;padding:10px 18px;z-index:1200;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,0.03)}
+.brand-link{text-decoration:none;color:inherit;display:flex;align-items:center;gap:16px;}
 .brand{display:flex;gap:12px;align-items:center}
 .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent2),var(--accent));box-shadow:0 0 18px rgba(0,255,208,.08);display:flex;align-items:center;justify-content:center;color:#021018;font-weight:700}
 .title{font-weight:700;font-size:16px}
 .subtitle{font-size:12px;color:var(--muted);margin-top:-4px}
-.online{margin-left:auto;color:var(--accent);font-weight:700;padding:6px 10px;border-radius:10px;border:1px solid rgba(0,255,208,0.06);background:linear-gradient(90deg,rgba(255,255,255,0.01),transparent)}
 .map-wrap{position:fixed;inset:64px 0 0 0}
 #map{width:100%;height:100%}
 .buildings-bar{position:fixed;left:50%;transform:translateX(-50%);bottom:22px;display:flex;gap:10px;padding:6px;border-radius:999px;z-index:1100}
 .building-btn{background:linear-gradient(90deg,var(--accent2),var(--accent));padding:10px 14px;border-radius:999px;border:none;color:#051018;font-weight:700;cursor:pointer;box-shadow:0 0 18px rgba(111,86,255,.06)}
-.building-sheet{position:fixed;left:12px;right:12px;bottom:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));backdrop-filter:blur(8px);border-radius:14px;padding:14px;z-index:1150;max-width:980px;margin:auto;transform:translateY(120%);transition:transform .45s cubic-bezier(.2,.9,.2,1);box-shadow:0 10px 40px rgba(0,0,0,.6)}
+/* Изменение фона и цвета текста для нижней панели (для черного текста) */
+.building-sheet{position:fixed;left:12px;right:12px;bottom:12px;background:rgba(255,255,255,0.95);
+backdrop-filter:blur(8px);border-radius:14px;padding:14px;z-index:1150;max-width:980px;margin:auto;transform:translateY(120%);transition:transform .45s cubic-bezier(.2,.9,.2,1);box-shadow:0 10px 40px rgba(0,0,0,.6);color:#051018;
+}
 .building-sheet.show{transform:translateY(0)}
 .sheet-row{display:flex;gap:12px;align-items:flex-start}
 .sheet-left{flex:1}
 .sheet-right{width:340px}
-.sheet-title{font-weight:800;font-size:18px;margin-bottom:6px;color:#fff}
-.muted{color:var(--muted);font-size:13px}
-.plan,.schedule{height:220px;border-radius:8px;background:rgba(255,255,255,0.03);display:flex;align-items:center;justify-content:center;border:1px dashed rgba(255,255,255,0.03);overflow:hidden;position:relative}
-.plan img,.schedule img{width:100%;height:100%;object-fit:contain;cursor:zoom-in;transition:transform .25s}
+.sheet-title{font-weight:800;font-size:18px;margin-bottom:6px;color:#051018;}
+.muted{color:#555;
+font-size:13px}
+.plan{height:220px;border-radius:8px;background:rgba(0,0,0,0.03);display:flex;align-items:center;justify-content:center;border:1px dashed rgba(0,0,0,0.1);overflow:hidden;position:relative}
+.plan img{width:100%;height:100%;object-fit:contain;cursor:zoom-in;transition:transform .25s}
 .controls{display:flex;gap:8px;margin-top:10px}
 .btn{padding:10px 12px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(90deg,#111827,#0b1220);color:#e6f7f1;font-weight:700;border:1px solid rgba(255,255,255,0.03)}
 .btn-accent{background:linear-gradient(90deg,var(--accent2),var(--accent));color:#051018;box-shadow:0 0 18px rgba(0,255,208,.06)}
-.admin-panel{position:fixed;inset:0;background:linear-gradient(180deg,rgba(0,0,0,0.6),rgba(0,0,0,0.7));display:none;align-items:center;justify-content:center;z-index:1300}
-.admin-panel.active{display:flex}
-.admin-box{width:980px;max-width:96%;background:linear-gradient(180deg,#071022,#0d1722);border-radius:12px;padding:18px;border:1px solid rgba(255,255,255,0.03)}
-.field{display:flex;flex-direction:column;margin-bottom:8px}
-label{font-size:13px;color:var(--muted);margin-bottom:6px}
-input[type="text"],input[type="number"],textarea,select{padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:transparent;color:#e6f7f1}
-.row{display:flex;gap:8px}
-.small{font-size:13px;color:var(--muted)}
-.hint{position:fixed;left:16px;top:76px;background:linear-gradient(90deg,rgba(255,255,255,0.02),transparent);padding:8px 12px;border-radius:999px;color:var(--muted);z-index:1200}
-/* thin neon border */
 .neon-edge::before{content:"";position:fixed;inset:0;pointer-events:none;border-radius:6px;z-index:1400;background:linear-gradient(90deg,rgba(111,86,255,.18),rgba(0,255,208,.12),rgba(255,105,180,.08));mask-image:linear-gradient(#000 0 0);opacity:.18}
 /* responsive */
 @media(max-width:900px){.sheet-row{flex-direction:column}.sheet-right{width:100%}.building-sheet{left:8px;right:8px}}
@@ -48,17 +43,17 @@ input[type="text"],input[type="number"],textarea,select{padding:10px;border-radi
 <body class="neon-edge">
 
 <div class="topbar">
-  <div class="brand">
-    <div class="logo">RZ</div>
-    <div>
-      <div class="title">Навигатор РЖДК — Уссурийск</div>
+  <a href="https://rgdk.info/" target="_blank" class="brand-link">
+    <div class="brand">
+      <div class="logo">RZ</div>
+      <div>
+        <div class="title">Навигатор РЖДК — Уссурийск</div>
+      </div>
     </div>
-  </div>
-  <div id="online" class="online">👥 Онлайн: 0</div>
+  </a>
 </div>
 
 <div class="map-wrap"><div id="map"></div></div>
-<div class="hint" id="hint">Условия · Создать свою карту</div>
 <div class="buildings-bar" id="buildingsBar"></div>
 
 <div class="building-sheet" id="buildingSheet" aria-hidden="true">
@@ -69,220 +64,220 @@ input[type="text"],input[type="number"],textarea,select{padding:10px;border-radi
       <div style="height:10px"></div>
       <div class="plan" id="planBlock">План не найден</div>
       <div style="height:10px"></div>
-      <div style="display:flex;gap:8px;align-items:center">
+      <div id="floorControls" style="display:flex;gap:8px;align-items:center">
         <div style="font-weight:800">Этаж:</div>
         <div id="floorButtons"></div>
       </div>
       <div style="height:12px"></div>
-      <div class="schedule" id="scheduleBlock">Расписание не найдено</div>
       <div class="controls">
         <button class="btn" onclick="closeSheet()">Закрыть</button>
       </div>
     </div>
     <div class="sheet-right">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <div style="font-weight:800">Детали</div>
-        <div class="small" id="sheetPhone">📞 —</div>
-      </div>
+      <div style="font-weight:800">Контакты и Примечания</div>
       <div style="height:8px"></div>
-      <div class="small">Координаты</div>
-      <div style="height:6px"></div>
-      <div style="display:flex;gap:8px"><input id="coordLatDisplay" type="text" readonly><input id="coordLonDisplay" type="text" readonly></div>
-      <div style="height:12px"></div>
-      <div class="small">Примечание</div>
-      <div id="sheetNote" style="margin-top:6px">—</div>
-    </div>
-  </div>
-</div>
-
-<div class="admin-panel" id="adminPanel" aria-hidden="true">
-  <div class="admin-box">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
-      <div>
-        <div style="font-weight:900;font-size:18px">Скрытая админка</div>
-        <div class="small">Доступ: ?admin=secret — изображения в /images/</div>
-      </div>
-      <div style="display:flex;gap:8px">
-        <button class="btn" onclick="closeAdmin()">Закрыть</button>
-        <button class="btn btn-accent" onclick="resetAll()">Сбросить</button>
-      </div>
-    </div>
-
-    <div style="display:flex;gap:12px">
-      <div style="flex:1;padding-right:8px;border-right:1px dashed rgba(255,255,255,0.03)">
-        <div class="field"><label>Выбрать здание</label><select id="buildingSelect" onchange="onSelectBuilding()"></select></div>
-        <div class="field"><label>Название</label><input id="inpName" type="text"></div>
-        <div class="field"><label>Адрес</label><input id="inpAddress" type="text"></div>
-        <div class="field"><label>Телефон</label><input id="inpPhone" type="text"></div>
-        <div class="row">
-          <div style="flex:1" class="field"><label>Широта</label><input id="inpLat" type="number" step="0.000001"></div>
-          <div style="flex:1" class="field"><label>Долгота</label><input id="inpLon" type="number" step="0.000001"></div>
-        </div>
-        <div class="field"><label>Количество этажей</label><input id="inpFloors" type="number" min="1"></div>
-        <div class="field"><label>Показывать этаж по умолчанию</label><input id="inpDefaultFloor" type="number" min="1"></div>
-        <div class="field"><label>Заметка</label><input id="inpNote" type="text"></div>
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <button class="btn btn-accent" onclick="saveBuildingAdmin()">💾 Сохранить</button>
-          <button class="btn" onclick="addBuildingAdmin()">➕ Добавить</button>
-          <button class="btn btn-accent" onclick="duplicateBuilding()">📄 Дублировать</button>
-          <button class="btn btn-accent" onclick="promptEditImages()">🖼️ Редактировать список файлов</button>
-          <button class="btn btn-danger" onclick="deleteBuildingAdmin()">🗑 Удалить</button>
-        </div>
-      </div>
-
-      <div style="width:360px;padding-left:12px">
-        <div style="font-weight:800;margin-bottom:8px">Экспорт / Импорт</div>
-        <div style="margin-bottom:8px"><div class="small">Экспорт сформирует <code>rzhdk_data.json</code></div><button class="btn btn-accent" onclick="exportData()">📥 Экспорт</button></div>
-        <div style="margin-top:14px;margin-bottom:8px"><div class="small">Импорт: загрузить <code>rzhdk_data.json</code></div><input type="file" id="importFile" accept=".json" style="display:none" onchange="handleImportFile(this.files[0])"><button class="btn" onclick="document.getElementById('importFile').click()">📤 Импорт</button></div>
-        <div style="height:10px"></div>
-        <div style="font-weight:800;margin-bottom:6px">Список изображений</div>
-        <div class="small">Файл <code>rzhdk_images.json</code> можно отредактировать в репозитории; здесь можно временно редактировать.</div>
-        <div style="height:8px"></div>
-        <textarea id="imagesJsonArea" style="width:100%;height:180px;background:transparent;color:#e6f7f1;border:1px solid rgba(255,255,255,0.03);padding:8px"></textarea>
-        <div style="height:8px"></div>
-        <div style="display:flex;gap:8px"><button class="btn btn-accent" onclick="saveImagesJson()">Сохранить список</button><button class="btn" onclick="loadImagesJson()">Загрузить из repo</button></div>
-      </div>
+      <div id="sheetNote" style="margin-top:6px; font-size: 14px;">—</div>
     </div>
   </div>
 </div>
 
 <script>
-const ADMIN_SECRET = 'secret';
-const STORAGE_KEY = 'rzhdk_data_v2';
-const IMAGES_KEY = 'rzhdk_images_v1';
+// Данные зданий с обновленными этажами, деталями и префиксами для файлов
+const buildingsData = [
+    { 
+        id:1, 
+        name:"Главный учебный корпус", 
+        address:"692527, Приморский край, г. Уссурийск, ул. Чичерина 146", 
+        coords:[43.792946, 131.980634], 
+        floors:3, 
+        defaultFloor:1, 
+        imagePrefix: 3, // Для файлов 3_1.jpg, 3_2.jpg, 3_3.jpg
+        detailsHtml: `<div class="small">Тел./факс:</div>
+            <div style="margin-top:2px; line-height: 1.4;">+7 (4234) 354738 – приёмная директора<br>+7 (4234) 354663 – бухгалтерия<br>+7 (4234) 354810 – учебная часть<br>+7 (4234) 354810 – приёмная комиссия</div>
+            <div class="small" style="margin-top:10px;">E-mail:</div>
+            <div style="margin-top:2px;"><a href="mailto:upu16@yandex.ru" style="color: #0088cc;">upu16@yandex.ru</a></div>` 
+    },
+    { 
+        id:2, 
+        name:"Учебный корпус (Горького 15)", 
+        address:"Приморский край, г. Уссурийск, ул. Горького 15", 
+        coords:[43.790857, 131.944324], 
+        floors:2, 
+        defaultFloor:1, 
+        imagePrefix: 1, // Для файлов 1_1.jpg, 1_2.jpg
+        detailsHtml: `<div class="small">Тел.:</div>
+            <div style="margin-top:2px;">8 (4234) 32-07-31</div>` 
+    },
+    { 
+        id:3, 
+        name:"Учебно-производственные мастерские", 
+        address:"Приморский край, г. Уссурийск, ул. Тургенева 15", 
+        coords:[43.804885, 131.977373], 
+        floors:2, 
+        defaultFloor:1, 
+        imagePrefix: 2, // Для файлов 2_1.jpg, 2_2.jpg
+        detailsHtml: `<div class="small">Тел.:</div>
+            <div style="margin-top:2px;">8 (4234) 38-10-86</div>` 
+    },
+    { 
+        id:4, 
+        name:"Общежитие", 
+        address:"Приморский край, г. Уссурийск, ул. Суханова 66", 
+        coords:[43.793303, 131.955428], 
+        floors:1, 
+        defaultFloor:1, 
+        imagePrefix: 4, // Для файлов 4_1.jpg
+        detailsHtml: `<div class="small">Тел.:</div>
+            <div style="margin-top:2px;">8 (4234) 32-15-45</div>` 
+    }
+];
 
-const DEFAULT_IMAGES = {
-  buildings: { "1": ["images/1_1.jpg", "images/1_2.jpg", "images/1_3.jpg"] },
-  schedule: { "1курс": ["images/schedule_1_1.jpg","images/schedule_1_2.jpg","images/schedule_1_3.jpg"], "2курс": ["images/schedule_2_1.jpg","images/schedule_2_2.jpg","images/schedule_2_3.jpg"] }
-};
+// IMAGES не используется, так как путь строится динамически в showFloorImage, 
+// но оставлю его пустым для совместимости, если он где-то еще мог быть использован.
+let IMAGES = { buildings: {} }; 
 
-const DEFAULT_DATA = {
-  buildings: [
-    { id:1, name:"Главный корпус", address:"ул. Горького, 15", phone:"+7 (4234) 12-34-56", coords:[43.790882,131.944252], floors:3, defaultFloor:1, note:"Стартовое здание" }
-  ],
-  meta:{createdAt:(new Date()).toISOString()}
-};
-
-let DATA = null;
-let IMAGES = null;
 let map = null;
 let placemarks = {};
 let currentBuilding = null;
+const DEFAULT_CENTER = [43.790882, 131.944252];
 
-// Try load remote JSONs from repo (rzhdk_data.json and rzhdk_images.json)
-async function tryFetch(path){ try{ const r = await fetch(path+'?no-cache='+Date.now()); if(!r.ok) return null; return await r.json(); }catch(e){ return null; } }
-
-async function loadAll(){
-  const remoteImages = await tryFetch('rzhdk_images.json');
-  if(remoteImages){ IMAGES = remoteImages; localStorage.setItem(IMAGES_KEY, JSON.stringify(IMAGES)); }
-  else{ const lsImg = localStorage.getItem(IMAGES_KEY); IMAGES = lsImg?JSON.parse(lsImg):DEFAULT_IMAGES; }
-
-  const remoteData = await tryFetch('rzhdk_data.json');
-  if(remoteData && remoteData.buildings){ DATA = remoteData; localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA)); }
-  else{ const ls = localStorage.getItem(STORAGE_KEY); DATA = ls?JSON.parse(ls):JSON.parse(JSON.stringify(DEFAULT_DATA)); localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA)); }
+// Инициализация карты
+function initMap(){
+    const center = buildingsData[0] ? buildingsData[0].coords : DEFAULT_CENTER;
+    map = new ymaps.Map('map', {
+        center: center,
+        zoom: 17,
+        controls:['zoomControl','fullscreenControl']
+    });
+    renderBuildingsOnMap();
 }
 
-function initMap(){ map = new ymaps.Map('map',{ center: DATA.buildings[0].coords||[43.790882,131.944252], zoom:17, controls:['zoomControl','fullscreenControl'] }); renderBuildingsOnMap(); }
+// Рендеринг зданий на карте и кнопок
+function renderBuildingsOnMap(){
+    map.geoObjects.removeAll();
+    placemarks={};
+    const bar = document.getElementById('buildingsBar');
+    bar.innerHTML='';
 
-function renderBuildingsOnMap(){ map.geoObjects.removeAll(); placemarks={}; const bar = document.getElementById('buildingsBar'); bar.innerHTML=''; DATA.buildings.forEach(b=>{ const pm = new ymaps.Placemark(b.coords,{ balloonContentHeader:b.name, balloonContentBody:b.address },{ preset:'islands#icon', iconColor:'#00ffd0' }); pm.events.add('click',()=>openSheetFor(b.id)); map.geoObjects.add(pm); placemarks[b.id]=pm; const btn = document.createElement('button'); btn.className='building-btn'; btn.textContent=b.name; btn.onclick=()=>{ map.setCenter(b.coords,17); openSheetFor(b.id); }; bar.appendChild(btn); }); }
+    buildingsData.forEach(b=>{
+        const pm = new ymaps.Placemark(b.coords,{
+            balloonContentHeader:b.name,
+            balloonContentBody:b.address
+        },{
+            preset:'islands#icon',
+            iconColor:'#00ffd0'
+        });
+        pm.events.add('click',()=>openSheetFor(b.id));
+        map.geoObjects.add(pm);
+        placemarks[b.id]=pm;
 
+        const btn = document.createElement('button');
+        btn.className='building-btn';
+        btn.textContent=b.name.replace(/\s\(.*\)/, ''); // Убираем (Горького 15) для кнопки
+        btn.onclick=()=>{
+            map.setCenter(b.coords,17);
+            openSheetFor(b.id);
+        };
+        bar.appendChild(btn);
+    });
+}
+
+// Открытие панели с деталями
 async function openSheetFor(id){
-  const b = DATA.buildings.find(x=>x.id===id); if(!b) return;
-  currentBuilding = b;
-  document.getElementById('sheetTitle').textContent = b.name;
-  document.getElementById('sheetAddress').textContent = b.address;
-  document.getElementById('sheetPhone').textContent = '📞 '+(b.phone||'—');
-  document.getElementById('coordLatDisplay').value = (b.coords && b.coords[0])?b.coords[0].toFixed(6):'';
-  document.getElementById('coordLonDisplay').value = (b.coords && b.coords[1])?b.coords[1].toFixed(6):'';
-  document.getElementById('sheetNote').textContent = b.note||'—';
-  // Floors
-  const floorButtons = document.getElementById('floorButtons'); floorButtons.innerHTML='';
-  const imgs = (IMAGES && IMAGES.buildings && IMAGES.buildings[String(b.id)])?IMAGES.buildings[String(b.id)]:[];
-  const floorsCount = b.floors || imgs.length || 1;
-  for(let i=1;i<=floorsCount;i++){ const fbtn = document.createElement('button'); fbtn.className='btn'; fbtn.textContent='Этаж '+i; fbtn.onclick = ()=>{ showFloorImage(b.id,i); }; floorButtons.appendChild(fbtn); }
-  // Show default floor 1
-  showFloorImage(b.id, b.defaultFloor||1);
-  // Schedule display (tabs)
-  loadScheduleToBlock();
-  // show sheet with animation
-  const sheet = document.getElementById('buildingSheet'); sheet.classList.add('show'); sheet.setAttribute('aria-hidden','false');
+    const b = buildingsData.find(x=>x.id===id);
+    if(!b) return;
+
+    currentBuilding = b;
+    document.getElementById('sheetTitle').textContent = b.name;
+    document.getElementById('sheetAddress').textContent = b.address;
+    
+    // Вставляем все контактные детали
+    document.getElementById('sheetNote').innerHTML = b.detailsHtml || 'Дополнительная информация отсутствует.';
+
+    // Кнопки этажей
+    const floorControls = document.getElementById('floorControls');
+    const floorButtons = document.getElementById('floorButtons');
+    floorButtons.innerHTML='';
+    
+    const floorsCount = b.floors || 1;
+
+    if (floorsCount > 1) {
+        floorControls.style.display = 'flex'; // Показываем блок управления этажами
+        for(let i=1;i<=floorsCount;i++){
+            const fbtn = document.createElement('button');
+            // Добавляем класс, чтобы отличать кнопки этажей от других кнопок
+            fbtn.className='btn floor-btn';
+            fbtn.textContent='Этаж '+i;
+            fbtn.onclick = ()=>{ 
+                showFloorImage(b.id,i); 
+                // Выделение активной кнопки
+                document.querySelectorAll('.floor-btn').forEach(btn => btn.classList.remove('btn-accent'));
+                fbtn.classList.add('btn-accent');
+            };
+            floorButtons.appendChild(fbtn);
+        }
+        // Выделяем кнопку первого этажа по умолчанию
+        if (floorButtons.firstChild) {
+            floorButtons.firstChild.classList.add('btn-accent');
+        }
+    } else {
+        floorControls.style.display = 'none'; // Скрываем, если только 1 этаж
+    }
+
+    // Показать план первого этажа (для всех зданий)
+    showFloorImage(b.id, b.defaultFloor||1);
+
+    const sheet = document.getElementById('buildingSheet');
+    sheet.classList.add('show');
+    sheet.setAttribute('aria-hidden','false');
 }
 
-function closeSheet(){ const sheet = document.getElementById('buildingSheet'); sheet.classList.remove('show'); sheet.setAttribute('aria-hidden','true'); currentBuilding=null; }
+// Закрытие панели с деталями
+function closeSheet(){
+    const sheet = document.getElementById('buildingSheet');
+    sheet.classList.remove('show');
+    sheet.setAttribute('aria-hidden','true');
+    currentBuilding=null;
+}
 
+// Загрузка изображения этажа с учетом префикса
 async function showFloorImage(bid, floor){
-  const planBlock = document.getElementById('planBlock');
-  planBlock.innerHTML = 'Загружаю...';
-  const candidate = `images/${bid}_${floor}.jpg`;
-  try{ const r = await fetch(candidate,{cache:'no-store'}); if(r.ok){ planBlock.innerHTML = `<img src="${candidate}" onclick="toggleZoom(this)">`; return; } }catch(e){}
-  // fallback to images list from IMAGES
-  const list = (IMAGES && IMAGES.buildings && IMAGES.buildings[String(bid)])?IMAGES.buildings[String(bid)]:[];
-  const found = list[floor-1]||list[0]||null;
-  if(found){ planBlock.innerHTML = `<img src="${found}" onclick="toggleZoom(this)">`; return; }
-  planBlock.innerHTML = '🗺️ План не найден (пытаемся: '+candidate+')';
+    const b = buildingsData.find(x=>x.id===bid);
+    if(!b) return;
+
+    const planBlock = document.getElementById('planBlock');
+    planBlock.innerHTML = 'Загружаю...';
+    
+    // Используем imagePrefix для построения пути к файлу
+    const prefix = b.imagePrefix;
+    const candidate = `images/${prefix}_${floor}.jpg`;
+    
+    try{
+        const r = await fetch(candidate,{cache:'no-store'});
+        if(r.ok){
+            planBlock.innerHTML = `<img src="${candidate}" onclick="toggleZoom(this)">`;
+            return;
+        }
+    }catch(e){}
+
+    planBlock.innerHTML = '🗺️ План не найден';
 }
 
-async function loadScheduleToBlock(){
-  const scheduleBlock = document.getElementById('scheduleBlock'); scheduleBlock.innerHTML='Загружаю...';
-  // create small tabs for 1курс/2курс
-  const entries = IMAGES && IMAGES.schedule ? IMAGES.schedule : DEFAULT_IMAGES.schedule;
-  let html = '<div style="display:flex;gap:8px;margin-bottom:8px">';
-  ['1курс','2курс'].forEach(k=>{ html += `<button class="btn" onclick="showSchedule('${k}')">${k}</button>`; });
-  html += '</div><div id="scheduleInner">Здесь расписание</div>';
-  scheduleBlock.innerHTML = html;
-  // show default 1курс
-  showSchedule('1курс');
+// Переключение масштаба изображения
+function toggleZoom(img){
+    if(img.style.transform==='scale(1.2)'){
+        img.style.transform='scale(1)';
+        img.style.cursor='zoom-in';
+    } else {
+        img.style.transform='scale(1.2)';
+        img.style.cursor='zoom-out';
+    }
 }
 
-async function showSchedule(key){
-  const inner = document.getElementById('scheduleInner'); inner.innerHTML='Загружаю...';
-  const arr = IMAGES.schedule && IMAGES.schedule[key] ? IMAGES.schedule[key] : [];
-  // show first 3 images as thumbnails stacked (user can click to view)
-  if(arr.length===0){ inner.innerHTML='📅 Расписание не найдено'; return; }
-  inner.innerHTML = arr.slice(0,3).map(u=>`<img src="${u}" style="width:32%;height:120px;object-fit:cover;margin-right:4px;cursor:zoom-in" onclick="window.open('${u}','_blank')">`).join('');
-}
-
-// zoom toggle
-function toggleZoom(img){ if(img.style.transform==='scale(1.2)'){ img.style.transform='scale(1)'; img.style.cursor='zoom-in'; } else { img.style.transform='scale(1.2)'; img.style.cursor='zoom-out'; } }
-
-// admin logic
-function openAdminIfParam(){ const prm = new URLSearchParams(window.location.search); if(prm.get('admin')===ADMIN_SECRET) showAdmin(); }
-function showAdmin(){ document.getElementById('adminPanel').classList.add('active'); document.getElementById('adminPanel').setAttribute('aria-hidden','false'); populateBuildingSelect(); loadImagesJsonToArea(); }
-function closeAdmin(){ const url=new URL(window.location); url.searchParams.delete('admin'); window.history.replaceState({},'',url); document.getElementById('adminPanel').classList.remove('active'); document.getElementById('adminPanel').setAttribute('aria-hidden','true'); }
-
-function populateBuildingSelect(){ const sel = document.getElementById('buildingSelect'); sel.innerHTML=''; const empty = document.createElement('option'); empty.value=''; empty.textContent='-- выберите --'; sel.appendChild(empty); DATA.buildings.forEach(b=>{ const o=document.createElement('option'); o.value=b.id; o.textContent=b.id+' — '+b.name; sel.appendChild(o); }); }
-function onSelectBuilding(){ const v=document.getElementById('buildingSelect').value; if(!v){ clearAdminForm(); return; } const id=parseInt(v); const b=DATA.buildings.find(x=>x.id===id); if(!b) return; document.getElementById('inpName').value=b.name||''; document.getElementById('inpAddress').value=b.address||''; document.getElementById('inpPhone').value=b.phone||''; document.getElementById('inpLat').value=b.coords[0]||''; document.getElementById('inpLon').value=b.coords[1]||''; document.getElementById('inpFloors').value=b.floors||1; document.getElementById('inpDefaultFloor').value=b.defaultFloor||1; document.getElementById('inpNote').value=b.note||''; }
-function clearAdminForm(){ document.getElementById('inpName').value=''; document.getElementById('inpAddress').value=''; document.getElementById('inpPhone').value=''; document.getElementById('inpLat').value=''; document.getElementById('inpLon').value=''; document.getElementById('inpFloors').value=''; document.getElementById('inpDefaultFloor').value=''; document.getElementById('inpNote').value=''; }
-
-function saveBuildingAdmin(){ const sel=document.getElementById('buildingSelect').value; if(!sel){ alert('Выберите здание или добавьте'); return; } const id=parseInt(sel); const idx=DATA.buildings.findIndex(x=>x.id===id); const name=document.getElementById('inpName').value.trim(); if(!name){ alert('Введите название'); return; } const address=document.getElementById('inpAddress').value.trim(); const phone=document.getElementById('inpPhone').value.trim(); const lat=parseFloat(document.getElementById('inpLat').value); const lon=parseFloat(document.getElementById('inpLon').value); const floors=parseInt(document.getElementById('inpFloors').value)||1; const defFloor=parseInt(document.getElementById('inpDefaultFloor').value)||1; const note=document.getElementById('inpNote').value.trim(); if(idx===-1){ DATA.buildings.push({id, name, address, phone, coords:[isNaN(lat)?43.790882:lat, isNaN(lon)?131.944252:lon], floors, defaultFloor:defFloor, note}); } else { const b=DATA.buildings[idx]; b.name=name; b.address=address; b.phone=phone; b.coords=[isNaN(lat)?b.coords[0]:lat, isNaN(lon)?b.coords[1]:lon]; b.floors=floors; b.defaultFloor=defFloor; b.note=note; } persist(); populateBuildingSelect(); renderBuildingsOnMap(); alert('Сохранено локально. Экспортируй rzhdk_data.json чтобы обновили все.'); }
-
-function addBuildingAdmin(){ const newId = DATA.buildings.length?Math.max(...DATA.buildings.map(x=>x.id))+1:1; DATA.buildings.push({id:newId,name:'Новое здание '+newId,address:'',phone:'',coords:[43.790882,131.944252],floors:1,defaultFloor:1,note:''}); persist(); populateBuildingSelect(); renderBuildingsOnMap(); document.getElementById('buildingSelect').value=newId; onSelectBuilding(); }
-
-function deleteBuildingAdmin(){ const sel=document.getElementById('buildingSelect').value; if(!sel){ alert('Выберите'); return; } const id=parseInt(sel); if(!confirm('Удалить здание #'+id+'?')) return; DATA.buildings = DATA.buildings.filter(x=>x.id!==id); persist(); populateBuildingSelect(); renderBuildingsOnMap(); clearAdminForm(); }
-
-function duplicateBuilding(){ const sel=document.getElementById('buildingSelect').value; if(!sel){ alert('Выберите'); return; } const id=parseInt(sel); const b = DATA.buildings.find(x=>x.id===id); const newId = Math.max(...DATA.buildings.map(x=>x.id))+1; const clone = JSON.parse(JSON.stringify(b)); clone.id=newId; DATA.buildings.push(clone); persist(); populateBuildingSelect(); renderBuildingsOnMap(); alert('Копия создана'); }
-
-function exportData(){ const blob = new Blob([JSON.stringify(DATA,null,2)],{type:'application/json'}); const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='rzhdk_data.json'; a.click(); URL.revokeObjectURL(url); alert('rzhdk_data.json скачан'); }
-function handleImportFile(file){ if(!file) return; const r=new FileReader(); r.onload=e=>{ try{ const obj=JSON.parse(e.target.result); if(!obj.buildings) throw new Error('Неверный формат'); if(!confirm('Импорт перезапишет локальные данные. Продолжить?')) return; DATA=obj; persist(); populateBuildingSelect(); renderBuildingsOnMap(); alert('Импорт выполнен'); }catch(err){ alert('Ошибка: '+err.message); } }; r.readAsText(file); }
-
-function persist(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(DATA)); }
-function resetAll(){ if(!confirm('Сбросить локальные данные?')) return; localStorage.removeItem(STORAGE_KEY); DATA=JSON.parse(JSON.stringify(DEFAULT_DATA)); persist(); populateBuildingSelect(); renderBuildingsOnMap(); alert('Сброшено'); }
-
-// Images JSON editing
-function loadImagesJsonToArea(){ const area = document.getElementById('imagesJsonArea'); area.value = JSON.stringify(IMAGES, null, 2); }
-function saveImagesJson(){ try{ const txt = document.getElementById('imagesJsonArea').value; const obj = JSON.parse(txt); IMAGES = obj; localStorage.setItem(IMAGES_KEY, JSON.stringify(IMAGES)); alert('Список изображений сохранён локально.'); }catch(e){ alert('JSON некорректен'); } }
-async function loadImagesJson(){ const remote = await tryFetch('rzhdk_images.json'); if(remote){ IMAGES = remote; localStorage.setItem(IMAGES_KEY, JSON.stringify(IMAGES)); loadImagesJsonToArea(); alert('Загружено из репо'); } else alert('rzhdk_images.json не найден в репозитории'); }
-function promptEditImages(){ document.getElementById('imagesJsonArea').focus(); alert('Отредактируй JSON в поле справа и нажми "Сохранить список"'); }
-
-// schedule images helper already in IMAGES
-
-// presence (online counter)
-let bc=null; let clientId=null; let peers=new Map();
-function initPresence(){ try{ bc=new BroadcastChannel('rzhdk_presence_v1'); }catch(e){ bc=null; } clientId=Math.random().toString(36).slice(2,9); peers.set(clientId,Date.now()); function ping(){ if(bc) bc.postMessage({t:'hello',id:clientId,ts:Date.now()}); else localStorage.setItem('rzhdk_ping', JSON.stringify({id:clientId,ts:Date.now()})); } if(bc){ bc.onmessage = ev=>{ const m = ev.data; if(m && m.t==='hello') { peers.set(m.id,m.ts); updateOnline(); } } } else { window.addEventListener('storage', ev=>{ if(ev.key==='rzhdk_ping' && ev.newValue){ try{ const d=JSON.parse(ev.newValue); peers.set(d.id,d.ts); updateOnline(); }catch(e){} } }); } setInterval(()=>{ ping(); const cutoff=Date.now()-30000; for(const [id,ts] of peers) if(ts<cutoff) peers.delete(id); updateOnline(); },5000); updateOnline(); }
-function updateOnline(){ document.getElementById('online').textContent = '👥 Онлайн: '+peers.size; }
-
-// init flow
-window.addEventListener('load', async ()=>{ await loadAll(); ymaps.ready(()=>initMap()); openAdminIfParam(); initPresence(); if(new URLSearchParams(window.location.search).get('admin')===ADMIN_SECRET) showAdmin(); });
+// Точка входа: Загрузка карты
+window.addEventListener('load', async ()=>{
+    ymaps.ready(()=>initMap());
+});
 
 </script>
 </body>
