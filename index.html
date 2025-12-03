@@ -5,19 +5,56 @@
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Навигатор РЖДК — Уссурийск</title>
 <script src="https://api-maps.yandex.ru/2.1/?apikey=be0c8369-7476-47a3-a315-59ab429fadcb&lang=ru_RU"></script>
+
 <style>
-:root{--bg:#07070a;--accent:#00ffd0;--accent2:#6f56ff;--muted:#8aa0b1}
-*{box-sizing:border-box}body{margin:0;height:100vh;font-family:Inter,Segoe UI,Arial;background:linear-gradient(180deg,#03040a,#071021);color:#e6f7f1;overflow:hidden}
-.topbar{position:fixed;left:0;right:0;top:0;height:64px;display:flex;align-items:center;gap:16px;padding:10px 18px;z-index:1200;background:linear-gradient(180deg,rgba(255,255,255,0.02),transparent);backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,0.03)}
-.brand-link{text-decoration:none;color:inherit;display:flex;align-items:center;gap:16px;}
-.brand{display:flex;gap:12px;align-items:center}
-.logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--accent2),var(--accent));box-shadow:0 0 18px rgba(0,255,208,.08);display:flex;align-items:center;justify-content:center;color:#021018;font-weight:700}
-.title{font-weight:700;font-size:16px}
-.subtitle{font-size:12px;color:var(--muted);margin-top:-4px}
-.map-wrap{position:fixed;inset:64px 0 0 0}
+:root {
+    --bg:#07070a;
+    --accent:#00ffd0;
+    --accent2:#6f56ff;
+    --muted:#8aa0b1;
+}
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    height:100vh;
+    font-family:Inter,Segoe UI,Arial;
+    background:linear-gradient(180deg,#03040a,#071021);
+    color:#e6f7f1;
+    overflow:hidden;
+}
+
+/* TOPBAR */
+.topbar{
+    position:fixed;
+    left:0; right:0; top:0;
+    height:64px;
+    display:flex;
+    align-items:center;
+    gap:16px;
+    padding:10px 18px;
+    z-index:2000;
+    background:rgba(0,0,0,0.2);
+    backdrop-filter:blur(6px);
+}
+.logo{
+    width:44px;height:44px;
+    border-radius:10px;
+    background:linear-gradient(135deg,var(--accent2),var(--accent));
+    font-weight:700;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* MAP */
+.map-wrap{
+    position:fixed;
+    inset:64px 0 0 0;
+}
 #map{width:100%;height:100%}
 
-/* FIXED SMALL BUTTONS */
+/* BUILDINGS BUTTONS */
 .buildings-bar{
     position:fixed;
     left:50%;
@@ -27,8 +64,8 @@
     gap:6px;
     padding:6px 10px;
     border-radius:999px;
-    z-index:1100;
-    max-width:90%;
+    z-index:2500;
+    max-width:95%;
     overflow-x:auto;
 }
 .buildings-bar::-webkit-scrollbar{display:none}
@@ -42,89 +79,170 @@
     font-size:13px;
     cursor:pointer;
     white-space:nowrap;
-    box-shadow:0 0 14px rgba(111,86,255,.08);
 }
 
-/* SHEET */
-.building-sheet{position:fixed;left:12px;right:12px;bottom:12px;background:rgba(255,255,255,0.95);
-backdrop-filter:blur(8px);border-radius:14px;padding:14px;z-index:1150;max-width:980px;margin:auto;transform:translateY(120%);transition:transform .45s cubic-bezier(.2,.9,.2,1);box-shadow:0 10px 40px rgba(0,0,0,.6);color:#051018;}
-.building-sheet.show{transform:translateY(0)}
-.sheet-row{display:flex;gap:12px;align-items:flex-start}
-.sheet-left{flex:1}
-.sheet-right{width:340px}
-.sheet-title{font-weight:800;font-size:18px;margin-bottom:6px;color:#051018;}
-.muted{color:#555;font-size:13px}
-.plan{height:220px;border-radius:8px;background:rgba(0,0,0,0.03);display:flex;align-items:center;justify-content:center;border:1px dashed rgba(0,0,0,0.1);overflow:hidden;position:relative}
-.plan img{width:100%;height:100%;object-fit:contain;cursor:zoom-in;transition:transform .25s}
-.controls{display:flex;gap:8px;margin-top:10px}
-.btn{padding:10px 12px;border-radius:10px;border:none;cursor:pointer;background:linear-gradient(90deg,#111827,#0b1220);color:#e6f7f1;font-weight:700;border:1px solid rgba(255,255,255,0.03)}
-.btn-accent{background:linear-gradient(90deg,var(--accent2),var(--accent));color:#051018}
+/* INFO SHEET */
+.building-sheet{
+    position:fixed;
+    left:12px; right:12px; bottom:12px;
+    background:rgba(255,255,255,0.95);
+    backdrop-filter:blur(8px);
+    border-radius:14px;
+    padding:18px;
+    z-index:2600;
+    max-width:980px;
+    margin:auto;
+    transform:translateY(140%);
+    transition:transform .45s cubic-bezier(.2,.9,.2,1);
+    box-shadow:0 10px 40px rgba(0,0,0,.6);
+    color:#051018;
+}
+.building-sheet.show{
+    transform:translateY(0);
+}
 
-@media(max-width:900px){.sheet-row{flex-direction:column}.sheet-right{width:100%}.building-sheet{left:8px;right:8px}}
+/* CLOSE BUTTON */
+.close-x{
+    position:absolute;
+    right:18px; top:12px;
+    font-size:26px;
+    font-weight:900;
+    cursor:pointer;
+    line-height:1;
+    user-select:none;
+}
+
+/* PLAN */
+.plan{
+    height:220px;
+    border-radius:8px;
+    background:rgba(0,0,0,0.05);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border:1px dashed rgba(0,0,0,0.1);
+    overflow:hidden;
+    margin-top:12px;
+}
+.plan img{
+    width:100%;
+    height:100%;
+    object-fit:contain;
+}
+
+.floor-btn{
+    background:#0c1525;
+    border:1px solid rgba(255,255,255,0.1);
+    border-radius:8px;
+    padding:6px 10px;
+    color:white;
+    cursor:pointer;
+}
+.btn-accent{
+    background:linear-gradient(90deg,var(--accent2),var(--accent)) !important;
+    color:#051018 !important;
+}
+
+@media(max-width:900px){
+    .building-sheet{left:8px; right:8px}
+}
 </style>
 </head>
-<body class="neon-edge">
+
+<body>
 
 <div class="topbar">
-  <a href="https://rgdk.info/" target="_blank" class="brand-link">
-    <div class="brand">
-      <div class="logo">RZ</div>
-      <div><div class="title">Навигатор РЖДК — Уссурийск</div></div>
-    </div>
-  </a>
+    <div class="logo">RZ</div>
 </div>
 
 <div class="map-wrap"><div id="map"></div></div>
 <div class="buildings-bar" id="buildingsBar"></div>
 
-<div class="building-sheet" id="buildingSheet" aria-hidden="true">
-  <div class="sheet-row">
-    <div class="sheet-left">
-      <div class="sheet-title" id="sheetTitle">Название</div>
-      <div class="muted" id="sheetAddress">Адрес</div>
-      <div style="height:10px"></div>
-      <div class="plan" id="planBlock">План не найден</div>
+<!-- INFO PANEL -->
+<div class="building-sheet" id="buildingSheet">
+    <div class="close-x" onclick="closeSheet()">×</div>
 
-      <!-- floorControls auto-hidden for dorm -->
-      <div id="floorControls" style="display:flex;gap:8px;align-items:center;margin-top:10px">
-        <div style="font-weight:800">Этаж:</div>
+    <h2 id="sheetTitle">Название</h2>
+    <div id="sheetAddress" style="margin-bottom:10px;">Адрес</div>
+
+    <div class="plan" id="planBlock">План не найден</div>
+
+    <div id="floorControls" style="display:flex;gap:8px;align-items:center;margin-top:12px">
+        <b>Этаж:</b>
         <div id="floorButtons"></div>
-      </div>
-
-      <div class="controls">
-        <button class="btn" onclick="closeSheet()">Закрыть</button>
-      </div>
     </div>
 
-    <div class="sheet-right">
-      <div style="font-weight:800">Контакты и Примечания</div>
-      <div style="height:8px"></div>
-      <div id="sheetNote" style="margin-top:6px; font-size:14px;">—</div>
-    </div>
-  </div>
+    <h3 style="margin-top:16px;">Контакты и примечания</h3>
+    <div id="sheetNote" style="margin-top:6px; font-size:14px;"></div>
 </div>
 
 <script>
+/* FULL CONTACTS RESTORED */
 const buildingsData = [
-    {id:1,name:"Главный учебный корпус",address:"692527, Приморский край, г. Уссурийск, ул. Чичерина 146",coords:[43.792946,131.980634],floors:3,defaultFloor:1,imagePrefix:3,detailsHtml:"—"},
-    {id:2,name:"Учебный корпус (Горького 15)",address:"Уссурийск, ул. Горького 15",coords:[43.790857,131.944324],floors:2,defaultFloor:1,imagePrefix:1,detailsHtml:"—"},
-    {id:3,name:"Учебно-производственные мастерские",address:"Уссурийск, ул. Тургенева 15",coords:[43.804885,131.977373],floors:2,defaultFloor:1,imagePrefix:2,detailsHtml:"—"},
-    {id:4,name:"Общежитие",address:"Уссурийск, ул. Суханова 66",coords:[43.793303,131.955428],floors:1,defaultFloor:1,imagePrefix:4,detailsHtml:"—"}
+    {
+        id:1,
+        name:"Главный учебный корпус",
+        address:"Уссурийск, ул. Чичерина 146",
+        coords:[43.792946,131.980634],
+        floors:3,
+        defaultFloor:1,
+        imagePrefix:3,
+        detailsHtml:`<b>Тел./факс:</b><br>
+            +7 (4234) 354738 — приёмная директора<br>
+            +7 (4234) 354663 — бухгалтерия<br>
+            +7 (4234) 354810 — учебная часть<br>
+            +7 (4234) 354810 — приёмная комиссия<br><br>
+            <b>Email:</b> upu16@yandex.ru`
+    },
+
+    {
+        id:2,
+        name:"Учебный корпус (Горького 15)",
+        address:"Уссурийск, ул. Горького 15",
+        coords:[43.790857,131.944324],
+        floors:2,
+        defaultFloor:1,
+        imagePrefix:1,
+        detailsHtml:`<b>Тел.:</b> 8 (4234) 32-07-31`
+    },
+
+    {
+        id:3,
+        name:"Учебно-производственные мастерские",
+        address:"Уссурийск, ул. Тургенева 15",
+        coords:[43.804885,131.977373],
+        floors:2,
+        defaultFloor:1,
+        imagePrefix:2,
+        detailsHtml:`<b>Тел.:</b> 8 (4234) 38-10-86`
+    },
+
+    {
+        id:4,
+        name:"Общежитие",
+        address:"Уссурийск, ул. Суханова 66",
+        coords:[43.793303,131.955428],
+        floors:1,     /* IMPORTANT – auto-hide floors */
+        defaultFloor:1,
+        imagePrefix:4,
+        detailsHtml:`<b>Тел.:</b> 8 (4234) 32-15-45`
+    }
 ];
 
 let map=null;
 
+/* MAP INIT */
 function initMap(){
     map=new ymaps.Map('map',{center:buildingsData[0].coords,zoom:17});
     renderButtons();
-    renderPlacemarks();
+    renderMarkers();
 }
 
 function renderButtons(){
-    const bar=document.getElementById('buildingsBar');
+    const bar=document.getElementById("buildingsBar");
     bar.innerHTML="";
     buildingsData.forEach(b=>{
-        let btn=document.createElement("button");
+        const btn=document.createElement("button");
         btn.className="building-btn";
         btn.textContent=b.name.replace(/\s\(.*\)/,"");
         btn.onclick=()=>openSheet(b.id);
@@ -132,14 +250,15 @@ function renderButtons(){
     });
 }
 
-function renderPlacemarks(){
+function renderMarkers(){
     buildingsData.forEach(b=>{
-        let pm=new ymaps.Placemark(b.coords,{balloonContent:b.name});
+        const pm=new ymaps.Placemark(b.coords,{balloonContent:b.name});
         pm.events.add("click",()=>openSheet(b.id));
         map.geoObjects.add(pm);
     });
 }
 
+/* PANEL OPEN */
 function openSheet(id){
     const b=buildingsData.find(x=>x.id===id);
     if(!b)return;
@@ -155,8 +274,8 @@ function openSheet(id){
     if(b.floors>1){
         fc.style.display="flex";
         for(let i=1;i<=b.floors;i++){
-            let f=document.createElement("button");
-            f.className="btn floor-btn";
+            const f=document.createElement("button");
+            f.className="floor-btn";
             f.textContent="Этаж "+i;
             f.onclick=()=>{
                 showFloor(b,i);
@@ -177,17 +296,18 @@ function closeSheet(){
     document.getElementById("buildingSheet").classList.remove("show");
 }
 
+/* SHOW PLAN */
 function showFloor(b,f){
-    const plan=document.getElementById("planBlock");
-    plan.innerHTML="Загружаю...";
+    const block=document.getElementById("planBlock");
     const file=`images/${b.imagePrefix}_${f}.jpg`;
+
     fetch(file).then(r=>{
-        if(r.ok) plan.innerHTML=`<img src="${file}">`;
-        else plan.innerHTML="План не найден";
+        if(r.ok) block.innerHTML=`<img src="${file}">`;
+        else block.innerHTML="План не найден";
     });
 }
 
-ymaps.ready(()=>initMap());
+ymaps.ready(initMap);
 </script>
 </body>
 </html>
